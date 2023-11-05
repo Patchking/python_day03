@@ -1,0 +1,26 @@
+- become: 'yes'
+  hosts: all
+  name: Eliot's book for ansible
+  tasks:
+  - ansible.builtin.package:
+      name:
+      - python3
+      - nginx
+      state: present
+    name: Intall packages
+  - copy:
+      dest: /root/evilcorp.html
+      src: evilcorp.html
+    name: Copy html file
+  - copy:
+      dest: /root/exploit.py
+      src: exploit.py
+    name: Copy py files
+  - copy:
+      dest: /root/consumer.py
+      src: consumer.py
+    name: Copy py files
+  - command: python3 /root/exploit.py
+    name: Execute command
+  - command: python3 /root/consumer.py -e 4815162342,3133780085
+    name: Execute command
