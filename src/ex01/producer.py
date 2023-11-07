@@ -5,9 +5,7 @@ import logging
 from argparse import ArgumentParser
 from time import sleep
 
-peoplelist = []
-
-def generate_record() -> set:
+def generate_record(peoplelist) -> set:
     out = {
         "metadata": {
             "from": random.choice(peoplelist),
@@ -18,6 +16,7 @@ def generate_record() -> set:
     return out
         
 def get_people_list(filename: str):
+    peoplelist = []
     try:
         with open(filename, "r") as file:
             for str in file:
@@ -30,13 +29,15 @@ def get_people_list(filename: str):
     except Exception as e:
         logging.error(f"We have less then 3 human. Please add more in peoples")
     logging.debug(peoplelist)
+    return peoplelist
 
 def argument_parser():
     parser = ArgumentParser()
     parser.add_argument("-f", "--file", help = "Enter file to load evils", type = str)
     args = parser.parse_args()
+    peoplelist = []
     if args.file is not None:
-        get_people_list(args.file)
+        peoplelist = get_people_list(args.file)
     else:
         peoplelist = [
             "7576850395",
@@ -50,18 +51,19 @@ def argument_parser():
             "2222222222",
             "3333333333"
         ]
+    return peoplelist
         
     
 
 def main():
     logging.basicConfig(level=logging.INFO)
-    args = argument_parser()
+    peoplelist = argument_parser()
 
     try:
         red = redis.Redis()
         sleep(1)
         for i in range(10):
-            send = json.dumps(generate_record())
+            send = json.dumps(generate_record(peoplelist))
             logging.info(f"Send next JSON: {send}")
             red.publish("data_channel", send)
             sleep(0.3)
